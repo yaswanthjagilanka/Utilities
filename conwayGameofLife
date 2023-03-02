@@ -1,0 +1,69 @@
+# basically a cell is either alive or dead
+# board with row * col size for the cells
+# each cell will have a status
+
+### Rules
+# Case 1 : alive cells
+# if a cell has less than 2 neighbours : die
+# if a cell has between 2 and 3 neighbours : live
+# if a cell has greater than 3 neighbours : die
+
+# Case 2 : dead cells
+# if a cell has 3 neighbours : live
+
+import random
+from typing import List
+
+class conWayLife():
+  
+  def __init__(self,row : int,col : int ) -> None:
+    self.rows = row
+    self.cols = col
+    self.board = [[ 0 for _ in range(self.cols)] for _ in range(self.rows)]
+    
+  def updateStatus(self) -> bool:
+    self.newboard = [[ 0 for _ in range(self.cols)] for _ in range(self.rows)]
+    for r in range(self.rows):
+      for c in range(self.cols):
+        aliveCells = self.neighbourCheck(r,c)
+        if self.board[r][c]==1:
+          if aliveCells<2:
+            self.newboard[r][c]=0
+          elif 2<=aliveCells<=3:
+            self.newboard[r][c]=1
+          elif aliveCells>3:
+            self.newboard[r][c]=0
+        else:
+          if aliveCells==3:
+            self.newboard[r][c]=1
+    self.board = self.newboard.copy()
+    return True
+          
+  def neighbourCheck(self,r : int, c : int) -> int:
+    # check r-1,r+1 and c-1,c+1
+    neighList = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
+    sumBoard=0
+    for neigh in neighList:
+      if r+neigh[0]<0 or r+neigh[0]>=self.rows or c+neigh[1]<0 or c+neigh[1]>=self.cols:
+        continue
+      else:
+        sumBoard+=self.board[r+neigh[0]][c+neigh[1]]
+    return sumBoard
+      
+  def setStatus(self,n : int) -> bool:
+    while n>0:
+      r,c = random.choice(range(self.rows)),random.choice(range(self.cols))
+      self.board[r][c]=1
+      n-=1
+    return True
+    
+def caller(shape: List,init_random: int,iterations : int):
+  conObject = conWayLife(shape[0],shape[1])
+  conObject.setStatus(init_random)
+  while iterations>0:
+    conObject.updateStatus()
+    print(conObject.board)
+    iterations-=1
+    
+    
+caller([5,5],7,6)
